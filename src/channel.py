@@ -52,7 +52,7 @@ class Channel:
         with open(filename, 'w') as f:
             json.dump(data, f)
 
-    def print_info(dict_to_print: dict) -> None:
+    def print_info(self, dict_to_print: dict) -> None:
         """Выводит словарь в json-подобном удобном формате с отступами"""
         print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
 
