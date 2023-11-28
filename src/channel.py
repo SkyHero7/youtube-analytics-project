@@ -1,6 +1,6 @@
-import requests
 from googleapiclient.discovery import build
 import json
+import os
 
 class Channel:
     """Класс для ютуб-канала"""
@@ -8,7 +8,7 @@ class Channel:
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.channel_id = channel_id
-        self.api_key = 'AIzaSyBZ76ebMl_GDynQb9wNWbIvrREj4J3mISQ'
+        self.api_key = os.environ.get('YOUTUBE_API_KEY')
         self.channel_id = channel_id
         self.title = None
         self.description = None
@@ -32,24 +32,6 @@ class Channel:
             self.video_count = statistics['videoCount']
             self.view_count = statistics['viewCount']
 
-    def print_info(self) -> None:
-        """Выводит в консоль информацию о канале."""
-        url = f'https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id={self.channel_id}&key={self.api_key}'
-        response = requests.get(url)
-        data = response.json()
-
-        if 'items' in data:
-            channel_info = data['items'][0]
-            snippet = channel_info['snippet']
-            statistics = channel_info['statistics']
-
-            print({
-                "title": snippet['title'],
-                "description": snippet['description'],
-                "subscriberCount": statistics['subscriberCount'],
-                "viewCount": statistics['viewCount'],
-                "videoCount": statistics['videoCount']
-            })
 
     @classmethod
     def get_service(cls):
@@ -69,4 +51,8 @@ class Channel:
         }
         with open(filename, 'w') as f:
             json.dump(data, f)
+
+    def print_info(dict_to_print: dict) -> None:
+        """Выводит словарь в json-подобном удобном формате с отступами"""
+        print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
 
