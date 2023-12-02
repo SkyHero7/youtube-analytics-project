@@ -32,6 +32,21 @@ class Channel:
             self.video_count = statistics['videoCount']
             self.view_count = statistics['viewCount']
 
+    def __str__(self):
+        return f"self.name (self.link)"
+
+    def __add__(self, other):
+        if self.subscriber_count > other.subscriber_count:
+            return str(self)
+        else:
+            return str(other)
+
+    def __sub__(self, other):
+        return self.subscriber_count - other.subscriber_count
+
+    def __eq__(self, other):
+        return self.subscriber_count == other.subscriber_count
+
 
     @classmethod
     def get_service(cls):
