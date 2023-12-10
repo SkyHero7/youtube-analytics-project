@@ -1,6 +1,6 @@
 from googleapiclient.discovery import build
 import json
-import os
+import datetime
 
 class Channel:
     """Класс для ютуб-канала"""
@@ -70,4 +70,58 @@ class Channel:
     def print_info(self, dict_to_print: dict) -> None:
         """Выводит словарь в json-подобном удобном формате с отступами"""
         print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
+
+    class Video:
+        def __init__(self, video_id, title, link, views, likes):
+            self.video_id = video_id
+            self.title = title
+            self.link = link
+            self.views = views
+            self.likes = likes
+
+        def __str__(self):
+            return self.title
+
+    class PLVideo(Video):
+        def __init__(self, video_id, title, link, views, likes, playlist_id):
+            super().__init__(video_id, title, link, views, likes)
+            self.playlist_id = playlist_id
+
+    class PlayList:
+        def init(self, _id, title=None, url=None):
+            self.id = _id
+            self.title = title
+            self.url = url
+            self.videos = []
+
+        @property
+        def total_duration(self):
+            total_seconds = 0
+            for video in self.videos:
+                total_seconds += video.duration.total_seconds()
+            return datetime.timedelta(seconds=total_seconds)
+
+        def show_best_video(self):
+            best_video = max(self.videos, key=lambda x: x.likes)
+            return best_video.url
+
+    class Video:
+        def init(self, title, url, duration, likes):
+            self.title = title
+            self.url = url
+            self.duration = duration
+            self.likes = likes
+
+    pl = PlayList('PLv_zOGKKxVpj-n2qLkEM2Hj96LO6uqgQw')
+    pl.title = "Moscow Python Meetup №81"
+    pl.url = "https://www.youtube.com/playlist?list=PLv_zOGKKxVpj-n2qLkEM2Hj96LO6uqgQw"
+    video1 = Video("Video 1", "https://youtu.be/abc123", datetime.timedelta(minutes=30), 1000)
+    video2 = Video("Video 2", "https://youtu.be/cUGyMzWQcGM", datetime.timedelta(minutes=45), 2000)
+    video3 = Video("Video 3", "https://youtu.be/xyz456", datetime.timedelta(minutes=34), 1500)
+    pl.videos.extend([video1, video2, video3])
+
+    duration = pl.total_duration
+    print(str(duration))  # Output: 1:49:00
+
+    print(pl.show_best_video())  # Output: https://youtu.be/cUGyMzWQcGM
 
