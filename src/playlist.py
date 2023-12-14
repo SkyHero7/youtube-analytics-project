@@ -1,19 +1,28 @@
 import datetime
+import requests
+
 
 class PlayList:
     def __init__(self, playlist_id):
         self.playlist_id = playlist_id
-        self.title = "Moscow Python Meetup №81"
-        self.url = f"https://www.youtube.com/playlist?list={playlist_id}"
-        self.videos = [
-            {"url": "https://youtu.be/cUGyMzWQcGM", "likes": 150},
-            {"url": "https://youtu.be/abcdefgh", "likes": 100},
-            {"url": "https://youtu.be/ijklmnop", "likes": 120}
-        ]
+        self.title = ""
+        self.url = ""
+        self.videos = []
+
+        self.get_playlist_info()
+
+    def get_playlist_info(self):
+        api_url = f"https://api.getplaylistinfo.com/{self.playlist_id}"
+        response = requests.get(api_url)
+        data = response.json()
+
+        self.title = data["title"]
+        self.url = data["url"]
+        self.videos = data["videos"]
 
     @property
     def total_duration(self):
-        total_seconds = sum([10 * 60, 15 * 60, 20 * 60])  # Example durations in seconds
+        total_seconds = sum([video["duration"] for video in self.videos])
         return datetime.timedelta(seconds=total_seconds)
 
     def show_best_video(self):
