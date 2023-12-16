@@ -1,18 +1,23 @@
+import os
 import datetime
 import requests
+from googleapiclient.discovery import build
 
+from src.video import Video
 
 class PlayList:
-    def __init__(self, playlist_id):
+    api_key: str = os.getenv('YT_API_KEY')
+    youtube = build('youtube', 'v3', developerKey=api_key)
+    def __init__(self, playlist_id: str):
         self.playlist_id = playlist_id
         self.title = ""
         self.url = ""
-        self.videos = []
+        self.videos = [Video(video_id) for video_id in self.video_ids]
 
         self.get_playlist_info()
 
     def get_playlist_info(self):
-        api_url = f"https://api.getplaylistinfo.com/{self.playlist_id}"
+        api_url = os.getenv('YT_API_KEY')
         response = requests.get(api_url)
         data = response.json()
 
